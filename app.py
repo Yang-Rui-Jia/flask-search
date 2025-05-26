@@ -1,28 +1,27 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, render_template, request
 import csv
 
 app = Flask(__name__)
 
-# 讀取 CSV 資料
 def load_data():
-    data = []
-    with open('list.csv', newline='', encoding='utf-8') as f:
+    with open('list.csv', newline='', encoding='cp950') as f:
         reader = csv.DictReader(f)
-        for row in reader:
-            data.append(row)
+        data = [row for row in reader]
     return data
 
 DATA = load_data()
 
-@app.route("/")
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template("index.html")
+    query = ''
+    results = []
+    if request.method == 'POST':
+        query = request.form.get('query', '').strip()
+        if query:
+            # 搜尋 A 欄位符合的資料，假設A欄位名稱是 'A'
+            results = [row for row in DATA if row['A'] == query]
+    return render_template('index.html', query=query, results=results)
 
-@app.route("/search")
-def search():
-    query = request.args.get("q", "").lower()
-    results = [row for row in DATA if query in row["A"].lower()]
-    return jsonify(results)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
+    # 讓外部能連進來，port 10000 跟你之前設定的一致
     app.run(host='0.0.0.0', port=10000)
