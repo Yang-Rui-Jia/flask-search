@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>CSV 搜尋</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input { width: 300px; padding: 8px; }
+        #results { margin-top: 20px; }
+        .item { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>搜尋 CSV</h1>
+    <input type="text" id="searchInput" placeholder="輸入 A 欄關鍵字">
+    <button onclick="search()">搜尋</button>
+    <div id="results"></div>
+
+    <script>
+        function search() {
+            const query = document.getElementById("searchInput").value;
+            fetch(`/search?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    const results = document.getElementById("results");
+                    results.innerHTML = "";
+                    if (data.length === 0) {
+                        results.innerHTML = "<p>沒有找到結果</p>";
+                        return;
+                    }
+                    data.forEach(item => {
+                        const div = document.createElement("div");
+                        div.className = "item";
+                        div.innerHTML = `<strong>${item.A}</strong>: ${item.B}`;
+                        results.appendChild(div);
+                    });
+                });
+        }
+    </script>
+</body>
+</html>
