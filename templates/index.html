@@ -1,23 +1,60 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8" />
-    <title>模糊搜尋範例</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>搜尋頁面</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <h1>模糊搜尋</h1>
-    <form method="POST" action="/">
-        <input type="text" name="query" value="{{ query }}" placeholder="輸入關鍵字" />
-        <button type="submit">搜尋</button>
-    </form>
+  <h1>搜尋資料</h1>
+  <form method="post" action="/">
+    <input type="text" name="query" placeholder="請輸入關鍵字" required />
+    <button type="submit">搜尋</button>
+  </form>
 
-    <h2>搜尋結果：</h2>
-    <ul>
+  {% if results is defined %}
+    <h2>搜尋結果 (共 {{ results|length }} 筆)</h2>
+    {% if results|length > 0 %}
+    <table>
+      <thead>
+        <tr>
+          <th>A欄內容</th>
+          <th>B欄連結</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for row in results %}
-            <li>{{ row | join(' — ') }}</li>
-        {% else %}
-            <li>找不到結果</li>
+        <tr>
+          <td>{{ row[0] }}</td>
+          <td><a href="{{ row[1] }}" target="_blank" rel="noopener noreferrer">{{ row[1] }}</a></td>
+        </tr>
         {% endfor %}
-    </ul>
+      </tbody>
+    </table>
+    {% else %}
+      <p>找不到符合的資料。</p>
+    {% endif %}
+  {% endif %}
 </body>
 </html>
