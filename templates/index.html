@@ -5,24 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>搜尋頁面</title>
   <style>
+    body {
+      background-image: url('/static/bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
     table {
       border-collapse: collapse;
       width: 100%;
       margin-top: 20px;
+      background-color: rgba(0, 0, 0, 0.6); /* 半透明黑背景 */
+      color: #fff;
     }
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
+      text-align: left;
     }
     th {
-      background-color: #f2f2f2;
+      background-color: rgba(0, 0, 0, 0.8);
     }
     a {
-      color: #0066cc;
+      color: #00ccff;
       text-decoration: none;
     }
     a:hover {
       text-decoration: underline;
+    }
+    form {
+      margin-top: 30px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 300px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: none;
+    }
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #00ccff;
+      color: #000;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    button:hover {
+      background-color: #0099cc;
     }
   </style>
 </head>
