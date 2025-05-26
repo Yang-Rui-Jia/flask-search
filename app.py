@@ -1,15 +1,14 @@
-from flask import Flask, render_template, request
 import csv
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-def load_data():
-    with open('list.csv', newline='', encoding='cp950') as f:  # 繁體中文編碼
-        reader = csv.DictReader(f)
-        data = [row for row in reader]
-    return data
-
-DATA = load_data()
+# 讀 CSV，無標題，存成 list of lists
+DATA = []
+with open('list.csv', newline='', encoding='cp950') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        DATA.append(row)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -19,8 +18,8 @@ def index():
         query = request.form.get('query', '').strip()
         if query:
             query_lower = query.lower()
-            # 模糊搜尋：只要輸入的字串包含在 A 欄裡就找出來
-            results = [row for row in DATA if query_lower in row['A'].lower()]
+            # 模糊搜尋：只要關鍵字在任一欄位就找到
+            results = [row for row in DATA if any(query_lower in cell.lower() for cell in row)]
     return render_template('index.html', query=query, results=results)
 
 if __name__ == '__main__':
