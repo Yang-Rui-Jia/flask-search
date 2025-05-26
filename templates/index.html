@@ -3,93 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>搜尋頁面</title>
+  <title>動畫搜尋</title>
   <style>
+    /* 背景設定 */
     body {
-      background-image: url('/static/bg.jpg');
+      background-image: url("/static/bg.jpg");
       background-size: cover;
-      background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed;
-      color: #fff;
+      background-position: center;
+      height: 100vh;
+      margin: 0;
       font-family: Arial, sans-serif;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 20px;
-      background-color: rgba(0, 0, 0, 0.6); /* 半透明黑背景 */
       color: #fff;
     }
-    th, td {
-      border: 1px solid #ddd;
+
+    /* 搜尋框 */
+    .search-container {
+      padding: 20px;
+      background-color: rgba(0,0,0,0.6);
+      max-width: 600px;
+      margin: 30px auto;
+      border-radius: 8px;
+    }
+
+    input[type="text"] {
+      width: 80%;
       padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: none;
+    }
+
+    button {
+      padding: 8px 15px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: none;
+      background-color: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+
+    /* 搜尋結果表格 */
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 80%;
+      background-color: rgba(0,0,0,0.7);
+      color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #444;
       text-align: left;
     }
+
     th {
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: #1e40af;
     }
+
     a {
-      color: #00ccff;
+      color: #60a5fa;
       text-decoration: none;
     }
+
     a:hover {
       text-decoration: underline;
     }
-    form {
-      margin-top: 30px;
-    }
-    input[type="text"] {
-      padding: 8px;
-      width: 300px;
-      font-size: 16px;
-      border-radius: 4px;
-      border: none;
-    }
-    button {
-      padding: 8px 16px;
-      font-size: 16px;
-      border: none;
-      border-radius: 4px;
-      background-color: #00ccff;
-      color: #000;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-    button:hover {
-      background-color: #0099cc;
-    }
+
   </style>
 </head>
 <body>
-  <h1>搜尋資料</h1>
-  <form method="post" action="/">
-    <input type="text" name="query" placeholder="請輸入關鍵字" required />
-    <button type="submit">搜尋</button>
-  </form>
+  <div class="search-container">
+    <form method="POST">
+      <input type="text" name="query" placeholder="請輸入搜尋關鍵字..." value="{{ query|default('') }}" />
+      <button type="submit">搜尋</button>
+    </form>
+  </div>
 
-  {% if results is defined %}
-    <h2>搜尋結果 (共 {{ results|length }} 筆)</h2>
-    {% if results|length > 0 %}
-    <table>
-      <thead>
-        <tr>
-          <th>動畫名稱</th>
-          <th>Telegram連結</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in results %}
-        <tr>
-          <td>{{ row[0] }}</td>
-          <td><a href="{{ row[1] }}" target="_blank" rel="noopener noreferrer">{{ row[1] }}</a></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-      <p>找不到符合的資料。</p>
-    {% endif %}
+  {% if results %}
+  <table>
+    <thead>
+      <tr>
+        <th>動畫名稱</th>
+        <th>Telegram連結</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in results %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td><a href="{{ row[1] }}" target="_blank">{{ row[1] }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   {% endif %}
 </body>
 </html>
