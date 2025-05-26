@@ -2,24 +2,22 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8" />
-    <title>搜尋頁面</title>
+    <title>模糊搜尋範例</title>
 </head>
 <body>
-    <h1>搜尋資料</h1>
+    <h1>模糊搜尋</h1>
     <form method="POST" action="/">
-        <input type="text" name="query" placeholder="請輸入搜尋字串" value="{{ query }}" />
+        <input type="text" name="query" value="{{ query }}" placeholder="輸入關鍵字" />
         <button type="submit">搜尋</button>
     </form>
 
-    {% if results %}
     <h2>搜尋結果：</h2>
     <ul>
         {% for row in results %}
-        <li>{{ row['A'] }} — {{ row['B'] }}</li>
+            <li>{{ row | join(' — ') }}</li>
+        {% else %}
+            <li>找不到結果</li>
         {% endfor %}
     </ul>
-    {% elif query %}
-    <p>找不到相關資料</p>
-    {% endif %}
 </body>
 </html>
