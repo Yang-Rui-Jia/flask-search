@@ -1,41 +1,25 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>CSV 搜尋</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        input { width: 300px; padding: 8px; }
-        #results { margin-top: 20px; }
-        .item { margin-bottom: 10px; }
-    </style>
+    <meta charset="UTF-8" />
+    <title>搜尋頁面</title>
 </head>
 <body>
-    <h1>搜尋 CSV</h1>
-    <input type="text" id="searchInput" placeholder="輸入 A 欄關鍵字">
-    <button onclick="search()">搜尋</button>
-    <div id="results"></div>
+    <h1>搜尋資料</h1>
+    <form method="POST" action="/">
+        <input type="text" name="query" placeholder="請輸入搜尋字串" value="{{ query }}" />
+        <button type="submit">搜尋</button>
+    </form>
 
-    <script>
-        function search() {
-            const query = document.getElementById("searchInput").value;
-            fetch(`/search?q=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    const results = document.getElementById("results");
-                    results.innerHTML = "";
-                    if (data.length === 0) {
-                        results.innerHTML = "<p>沒有找到結果</p>";
-                        return;
-                    }
-                    data.forEach(item => {
-                        const div = document.createElement("div");
-                        div.className = "item";
-                        div.innerHTML = `<strong>${item.A}</strong>: ${item.B}`;
-                        results.appendChild(div);
-                    });
-                });
-        }
-    </script>
+    {% if results %}
+    <h2>搜尋結果：</h2>
+    <ul>
+        {% for row in results %}
+        <li>{{ row['A'] }} — {{ row['B'] }}</li>
+        {% endfor %}
+    </ul>
+    {% elif query %}
+    <p>找不到相關資料</p>
+    {% endif %}
 </body>
 </html>
