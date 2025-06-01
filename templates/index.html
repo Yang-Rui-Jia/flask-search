@@ -1,111 +1,65 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>動畫搜尋</title>
-  <style>
-    /* 背景設定 */
-  body {
-    background-image: url("/static/bg.jpg");
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: contain;  /* 改成 contain 完整顯示 */
-    background-color: black;   /* 背景空白用黑色填充 */
-    height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
-    color: #fff;
-  }
-
-    /* 搜尋框 */
-    .search-container {
-      padding: 20px;
-      background-color: rgba(0,0,0,0.6);
-      max-width: 600px;
-      margin: 30px auto;
-      border-radius: 8px;
-    }
-
-    input[type="text"] {
-      width: 80%;
-      padding: 8px;
-      font-size: 16px;
-      border-radius: 4px;
-      border: none;
-    }
-
-    button {
-      padding: 8px 15px;
-      font-size: 16px;
-      border-radius: 4px;
-      border: none;
-      background-color: #3b82f6;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #2563eb;
-    }
-
-    /* 搜尋結果表格 */
-    table {
-      margin: 20px auto;
-      border-collapse: collapse;
-      width: 80%;
-      background-color: rgba(0,0,0,0.7);
-      color: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #444;
-      text-align: left;
-    }
-
-    th {
-      background-color: #1e40af;
-    }
-
-    a {
-      color: #60a5fa;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-  </style>
+    <meta charset="UTF-8">
+    <title>動畫搜尋器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='bg.jpg') }}');
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+        .container {
+            background-color: rgba(0,0,0,0.7);
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 4px 0;
+        }
+        a {
+            color: #0ff;
+        }
+    </style>
 </head>
 <body>
-  <div class="search-container">
-    <form method="POST">
-      <input type="text" name="query" placeholder="請輸入搜尋關鍵字..." value="{{ query|default('') }}" />
-      <button type="submit">搜尋</button>
-    </form>
-  </div>
+    <div class="container">
+        <h1>動畫搜尋器</h1>
+        <form method="post" action="/">
+            <input type="text" name="query" placeholder="輸入關鍵字" value="{{ query }}">
+            <button type="submit">搜尋</button>
+            <a href="{{ url_for('view_all') }}"><button type="button">檢視全部</button></a>
+        </form>
 
-  {% if results %}
-  <table>
-    <thead>
-      <tr>
-        <th>動畫名稱</th>
-        <th>Telegram連結</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in results %}
-      <tr>
-        <td>{{ row[0] }}</td>
-        <td><a href="{{ row[1] }}" target="_blank">{{ row[1] }}</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% endif %}
+        <hr>
+
+        <h3>新增資料</h3>
+        <form method="post" action="{{ url_for('add_entry') }}">
+            <input type="text" name="name" placeholder="動畫名稱" required>
+            <input type="text" name="link" placeholder="Telegram 連結" required>
+            <button type="submit">新增</button>
+        </form>
+
+        {% if results %}
+            <hr>
+            <h3>搜尋結果 / 全部資料</h3>
+            <ul>
+                {% for row in results %}
+                    <li>
+                        {{ row[0] }} — <a href="{{ row[1] }}" target="_blank">{{ row[1] }}</a>
+                        <form method="post" action="{{ url_for('delete_entry', index=loop.index0) }}" style="display:inline;">
+                            <button type="submit" onclick="return confirm('確定刪除這筆資料嗎？')">刪除</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 </body>
 </html>
