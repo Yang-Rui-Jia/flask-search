@@ -19,11 +19,10 @@ def index():
     data = load_data()
 
     if request.method == 'POST':
-        if 'query' in request.form:
+        if 'search' in request.form:
             query = request.form.get('query', '').strip()
             if query:
                 query_lower = query.lower()
-                # 模糊搜尋任一欄
                 results = [row for row in data if any(query_lower in cell.lower() for cell in row)]
         elif 'show_all' in request.form:
             results = data
