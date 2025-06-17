@@ -1,142 +1,130 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<title>動畫搜尋</title>
-<style>
-    body {
-        background: url("{{ url_for('static', filename='bg.jpg') }}") no-repeat center center fixed;
-        background-size: cover;
-        font-family: sans-serif;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        overflow: hidden; /* 整體頁面不滾動 */
-    }
-    .container {
-        width: 900px;
-        height: 700px;
-        margin: 20px auto;
-        background-color: rgba(0,0,0,0.6);
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-    h1 {
-        text-align: center;
-        margin: 0 0 20px 0;
-    }
-    form {
-        text-align: center;
-        margin-bottom: 20px;
-        flex: 0 0 auto;
-    }
-    input[type="text"] {
-        padding: 8px;
-        font-size: 16px;
-        width: 400px;
-    }
-    input[type="submit"] {
-        padding: 8px 12px;
-        font-size: 16px;
-        margin-left: 8px;
-    }
-    .results {
-        flex: 1 1 auto;
-        overflow-y: auto;
-        background-color: rgba(0,0,0,0.5);
-        border: 1px solid #fff;
-        padding: 10px;
-        box-sizing: border-box;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        color: #fff;
-    }
-    th, td {
-        border: 1px solid #fff;
-        padding: 8px 12px;
-        text-align: left;
-    }
-    a {
-        color: #00f;
-        word-break: break-all;
-    }
-    .pagination {
-        text-align: center;
-        margin-top: 10px;
-        flex: 0 0 auto;
-    }
-    .pagination a, .pagination span {
-        display: inline-block;
-        padding: 6px 12px;
-        margin: 0 4px;
-        border: 1px solid #fff;
-        color: #fff;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    .pagination .current {
-        background-color: #fff;
-        color: #000;
-        font-weight: bold;
-        cursor: default;
-    }
-</style>
+    <meta charset="UTF-8">
+    <title>動畫搜尋</title>
+    <style>
+        body {
+            background: url("{{ url_for('static', filename='bg.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        form {
+            margin: 20px auto;
+        }
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            padding: 8px 12px;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        .results-container {
+            flex: 1;
+            overflow-y: auto;
+            margin: 0 20px 20px 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #fff;
+        }
+        th, td {
+            border: 1px solid #fff;
+            padding: 8px 12px;
+            word-break: break-word;
+        }
+        a {
+            color: #00f;
+            word-break: break-all;
+        }
+        .pagination {
+            margin-top: 10px;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            background-color: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .pagination a:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        .pagination .current {
+            background-color: #00f;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
     <h1>動畫搜尋</h1>
-    <form method="post" action="{{ url_for('index') }}">
+    <form method="post">
         <input type="text" name="query" placeholder="輸入關鍵字" value="{{ query }}">
-        <input type="submit" name="search" value="搜尋">
+        <input type="submit" value="搜尋">
         <input type="submit" name="show_all" value="檢視全部資料">
     </form>
 
-    <div class="results">
+    <div class="results-container">
         {% if results %}
         <table>
-            <tr>
-                <th>動畫名稱</th>
-                <th>Telegram連結</th>
-            </tr>
-            {% for row in results %}
-            <tr>
-                <td>{{ row[0] }}</td>
-                <td>
-                    {% if row|length > 1 %}
-                        <a href="{{ row[1] }}" target="_blank">{{ row[1] }}</a>
-                    {% else %}
-                        無
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>動畫名稱</th>
+                    <th>Telegram連結</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>
+                        {% if row|length > 1 %}
+                            <a href="{{ row[1] }}" target="_blank">{{ row[1] }}</a>
+                        {% else %}
+                            無
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
-        {% else %}
-            <p style="color:#ccc; text-align:center;">沒有資料</p>
-        {% endif %}
-    </div>
 
-    {% if total_pages > 1 %}
-    <div class="pagination">
-        {% if page > 1 %}
-            <a href="?page={{ page - 1 }}">&laquo; 上一頁</a>
-        {% endif %}
-        {% for p in range(1, total_pages + 1) %}
-            {% if p == page %}
-                <span class="current">{{ p }}</span>
-            {% else %}
-                <a href="?page={{ p }}">{{ p }}</a>
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="?page={{ page - 1 }}{% if query %}&query={{ query }}{% endif %}{% if show_all %}&show_all=1{% endif %}">&laquo; 上一頁</a>
             {% endif %}
-        {% endfor %}
-        {% if page < total_pages %}
-            <a href="?page={{ page + 1 }}">下一頁 &raquo;</a>
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                    <span class="current">{{ p }}</span>
+                {% else %}
+                    <a href="?page={{ p }}{% if query %}&query={{ query }}{% endif %}{% if show_all %}&show_all=1{% endif %}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page < total_pages %}
+                <a href="?page={{ page + 1 }}{% if query %}&query={{ query }}{% endif %}{% if show_all %}&show_all=1{% endif %}">下一頁 &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% else %}
+            <p>沒有資料</p>
         {% endif %}
     </div>
-    {% endif %}
-</div>
 </body>
 </html>
