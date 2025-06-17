@@ -1,57 +1,47 @@
 import csv
-import os
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
-CSV_FILE = 'list.csv'
 
-def load_data():
+# 輔助函數：讀取 TXT 資料
+def read_txt():
     data = []
-    if os.path.exists(CSV_FILE):
-        with open(CSV_FILE, newline='', encoding='cp950') as f:
-            reader = csv.reader(f)
-            for row in reader:
-                data.append(row)
+    with open('list.txt', newline='', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        data = list(reader)
     return data
 
-def save_data(data):
-    with open(CSV_FILE, 'w', newline='', encoding='cp950') as f:
+# 輔助函數：新增資料到 TXT
+def append_to_txt(a_value, b_value):
+    with open('list.txt', 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerows(data)
+        writer.writerow([a_value, b_value])
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    data = load_data()
     query = ''
     results = []
+    data = read_txt()
+
     if request.method == 'POST':
-        query = request.form.get('query', '').strip().lower()
+        query = request.form.get('query', '').strip()
         if query:
-            results = [row for row in data if any(query in cell.lower() for cell in row)]
+            query_lower = query.lower()
+            results = [row for row in data if any(query_lower in cell.lower() for cell in row)]
     return render_template('index.html', query=query, results=results)
 
-@app.route('/view')
-def view_all():
-    data = load_data()
-    return render_template('index.html', results=data)
-
 @app.route('/add', methods=['POST'])
-def add_entry():
-    name = request.form.get('name', '').strip()
-    link = request.form.get('link', '').strip()
-    if name and link:
-        data = load_data()
-        data.append([name, link])
-        save_data(data)
-    return redirect(url_for('view_all'))
+def add():
+    a_value = request.form.get('a_value', '').strip()
+    b_value = request.form.get('b_value', '').strip()
+    if a_value and b_value:
+        append_to_txt(a_value, b_value)
+    return redirect(url_for('index'))
 
-@app.route('/delete/<int:index>', methods=['POST'])
-def delete_entry(index):
-    data = load_data()
-    if 0 <= index < len(data):
-        data.pop(index)
-        save_data(data)
-    return redirect(url_for('view_all'))
+@app.route('/view-txt')
+def view_txt():
+    data = read_txt()
+    return render_template('view_csv.html', data=data)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
