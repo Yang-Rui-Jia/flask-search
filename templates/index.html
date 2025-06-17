@@ -21,6 +21,7 @@
         input[type="submit"] {
             padding: 8px 12px;
             font-size: 16px;
+            margin-left: 8px;
         }
         table {
             margin: 20px auto;
@@ -40,7 +41,7 @@
     <h1>動畫搜尋</h1>
     <form method="post">
         <input type="text" name="query" placeholder="輸入關鍵字" value="{{ query }}">
-        <input type="submit" value="搜尋">
+        <input type="submit" name="search" value="搜尋">
         <input type="submit" name="show_all" value="檢視全部資料">
     </form>
     {% if results %}
