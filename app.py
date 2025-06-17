@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
+# 載入資料
 def load_data():
     data = []
     with open('list.txt', newline='', encoding='utf-8') as f:
@@ -18,7 +19,7 @@ def index():
     data = load_data()
 
     if request.method == 'POST':
-        if 'query' in request.form:
+        if 'search' in request.form:
             query = request.form.get('query', '').strip()
             if query:
                 query_lower = query.lower()
