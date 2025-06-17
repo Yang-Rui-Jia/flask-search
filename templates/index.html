@@ -2,64 +2,66 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>動畫搜尋器</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>動畫搜尋</title>
     <style>
         body {
-            background-image: url('{{ url_for('static', filename='bg.jpg') }}');
+            background: url("{{ url_for('static', filename='bg.jpg') }}") no-repeat center center fixed;
             background-size: cover;
-            background-repeat: no-repeat;
-            color: white;
-            text-shadow: 1px 1px 2px black;
+            font-family: sans-serif;
+            color: #fff;
+            text-align: center;
         }
-        .container {
-            background-color: rgba(0,0,0,0.7);
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 600px;
-            border-radius: 10px;
+        form {
+            margin-top: 50px;
         }
-        input, button {
+        input[type="text"] {
             padding: 8px;
-            margin: 4px 0;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        th, td {
+            border: 1px solid #fff;
+            padding: 8px 12px;
         }
         a {
-            color: #0ff;
+            color: #00f;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>動畫搜尋器</h1>
-        <form method="post" action="/">
-            <input type="text" name="query" placeholder="輸入關鍵字" value="{{ query }}">
-            <button type="submit">搜尋</button>
-            <a href="{{ url_for('view_all') }}"><button type="button">檢視全部</button></a>
-        </form>
-
-        <hr>
-
-        <h3>新增資料</h3>
-        <form method="post" action="{{ url_for('add_entry') }}">
-            <input type="text" name="name" placeholder="動畫名稱" required>
-            <input type="text" name="link" placeholder="Telegram 連結" required>
-            <button type="submit">新增</button>
-        </form>
-
-        {% if results %}
-            <hr>
-            <h3>搜尋結果 / 全部資料</h3>
-            <ul>
-                {% for row in results %}
-                    <li>
-                        {{ row[0] }} — <a href="{{ row[1] }}" target="_blank">{{ row[1] }}</a>
-                        <form method="post" action="{{ url_for('delete_entry', index=loop.index0) }}" style="display:inline;">
-                            <button type="submit" onclick="return confirm('確定刪除這筆資料嗎？')">刪除</button>
-                        </form>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
+    <h1>動畫搜尋</h1>
+    <form method="post">
+        <input type="text" name="query" placeholder="輸入關鍵字" value="{{ query }}">
+        <input type="submit" value="搜尋">
+        <input type="submit" name="show_all" value="檢視全部資料">
+    </form>
+    {% if results %}
+    <table>
+        <tr>
+            <th>動畫名稱</th>
+            <th>Telegram連結</th>
+        </tr>
+        {% for row in results %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>
+                {% if row|length > 1 %}
+                    <a href="{{ row[1] }}" target="_blank">{{ row[1] }}</a>
+                {% else %}
+                    無
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
 </body>
 </html>
